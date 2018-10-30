@@ -1,0 +1,20 @@
+name: "JD template"
+output_dir: "."
+navbar:
+  title: "Home"
+  right:
+    - text: "About"
+      href: about.html
+    - icon: fa-envelope fa-lg
+      href: mailto:<jld2227@cumc.columbia.edu>
+    - icon: fa-envelope fa-lg
+      href: mailto:<james.dalgleish@nih.gov>
+    - icon: fa-github fa-lg
+      href: http://github.com/jamesdalg/
+    - icon: fa-github fa-lg
+      href: https://cran.r-project.org/web/packages/CNVScope/index.html
+    - icon: fa-github fa-lg
+      href: https://www.ncbi.nlm.nih.gov/pubmed/?term=dalgleish+j
+
+output:
+  html_document
