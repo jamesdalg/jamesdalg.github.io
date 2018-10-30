@@ -15,7 +15,7 @@
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
@@ -71,6 +71,7 @@ h6 {
 }
 </style>
 
+<link rel="stylesheet" href="bootstrap.css" type="text/css" />
 
 </head>
 
@@ -105,34 +106,34 @@ button.code-folding-btn:focus {
 <style type="text/css">
 /* padding for bootstrap navbar */
 body {
-  padding-top: 51px;
+  padding-top: 60px;
   padding-bottom: 40px;
 }
 /* offset scroll position for anchor links (for fixed navbar)  */
 .section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
+  padding-top: 65px;
+  margin-top: -65px;
 }
 
 .section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
+  padding-top: 65px;
+  margin-top: -65px;
 }
 .section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
+  padding-top: 65px;
+  margin-top: -65px;
 }
 .section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
+  padding-top: 65px;
+  margin-top: -65px;
 }
 .section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
+  padding-top: 65px;
+  margin-top: -65px;
 }
 .section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
+  padding-top: 65px;
+  margin-top: -65px;
 }
 </style>
 
@@ -183,9 +184,6 @@ $(document).ready(function () {
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-        
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="about.html">About</a>
 </li>
@@ -226,6 +224,9 @@ $(document).ready(function () {
   </a>
 </li>
       </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -239,7 +240,8 @@ $(document).ready(function () {
 </div>
 
 
-<p>About</p>
+<div id="brief-introduction" class="section level3">
+<h3>Brief Introduction</h3>
 <p>I am a Graduate student at Columbia University, Department of Biostatistics. My current interests include R development, biostatistics, decision trees, genomics, epigenetics, penalized regression, and more. I am the author of the <a href="https://github.com/jamesdalg/HiClink">HiClink Hi-C toolkit</a>, and the <a href="https://cran.r-project.org/package=CNVScope">CNVScope R package</a> and shiny application, currently hosted by the National Cancer Institute to visually display epigenetic cancer data. My advisor at NCI is Paul Meltzer, whose lab formerly was part of the NHGRI and has worked on many large projects in Osteosarcoma, Breast Cancer, and other cancers. Within his lab, I have studied 3D DNA confirmation, DNA expression, and Copy Number Data.</p>
 <p>Prior to this, I worked at the NIDDK, kidney disease section, where I developed methodology to separate expression data and we have a paper currently in review for the Journal of the American Society of Nephrology.</p>
 <p>Much of my code features inherent parallelism to work with large datasets and utilizes several mechanisms to accomplish large scale computational tasks.</p>
@@ -247,6 +249,7 @@ $(document).ready(function () {
 Department of Biostatistics<br />
 Columbia University<br />
 CRTA 2017-2018 National Cancer Institute Genetics Branch</p>
+</div>
 
 
 

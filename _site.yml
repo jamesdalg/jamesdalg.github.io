@@ -2,7 +2,7 @@ name: "JD template"
 output_dir: "."
 navbar:
   title: "Home"
-  right:
+  left:
     - text: "About"
       href: about.html
     - icon: fa-envelope fa-lg
@@ -19,4 +19,7 @@ navbar:
       href: ./CV/JDalgeish_resume_1_15_2017v3.pdf
 
 output:
-  html_document
+  html_document:
+    theme: solar
+    css: bootstrap.css
+    
