@@ -20,6 +20,6 @@ navbar:
 
 output:
   html_document:
-    theme: solar
+    theme: flatly
     css: bootstrap.css
     
