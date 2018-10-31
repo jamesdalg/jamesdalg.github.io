@@ -17,6 +17,7 @@ Much of my code features inherent parallelism to work with large datasets and ut
 
 An example of my ability to visualize complex datasets can be found [here](noaa_flexdash.html).  
 
+
 James Dalgleish  
 Department of Biostatistics  
 Columbia University  

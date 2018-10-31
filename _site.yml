@@ -5,7 +5,7 @@ navbar:
   left:
     - text: "About"
       href: about.html
-    - text: "CV"
+    - icon: ai ai-cv
       href: /CV/JDalgeish_resume_1_15_2017v3.pdf
     - icon: fa-envelope fa-lg
       href: mailto:<jld2227@cumc.columbia.edu>
@@ -15,9 +15,9 @@ navbar:
       href: http://github.com/jamesdalg/
     - icon: fa-r-project fa-lg
       href: https://cran.r-project.org/web/packages/CNVScope/index.html
-    - icon: fa-microscope fa-lg
+    - icon: ai ai-pubmed
       href: https://www.ncbi.nlm.nih.gov/pubmed/?term=dalgleish+j
 
 output:
   html_document:
-    theme: flatly
+    theme: darkly
