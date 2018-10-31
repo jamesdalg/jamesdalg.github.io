@@ -1,0 +1,66 @@
+---
+title: "NY NOAA data"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(p8105.datasets)
+library(ggridges)
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+noaa <- p8105.datasets::ny_noaa %>% 
+  as.tibble() %>% 
+  janitor::clean_names()
+
+noaa_clean <- p8105.datasets::ny_noaa %>% #Pull in the data.
+  as.tibble() %>%  #convert to tibble format.
+  janitor::clean_names() %>%  #convert to snake case.
+mutate(day = lubridate::day(noaa$date), #create day, month, and year variables.
+       month = lubridate::month(noaa$date),
+       year = lubridate::year(noaa$date),
+       tmax = as.numeric(tmax)/10, #convert tmax and tmin to numeric type and correct to comparable units of degrees celcius (rather than tenths of degrees)
+       tmin = as.numeric(tmin)/10,
+       prcp = as.numeric(prcp)/10, #corrects the precipitation to be in milimeters rather than tenths of a mililiter
+       snow = as.numeric(snow),
+       snwd = as.numeric(snwd)) 
+tmaxmin_hex <- noaa_clean %>% 
+  ggplot(aes(y=tmax,x=tmin)) + geom_hex() +
+  labs(y="Max temperature, in Degrees C", x="Minimum Temperature In Degrees C")
+snow_year_dist <- noaa_clean %>% 
+  filter(snow > 0 & snow < 100) %>% 
+    ggplot(aes(x=snow,y=year,color=snow,fill=snow)) + 
+  geom_density_ridges_gradient(scale=0.85,gradient_lwd = .1,
+                               aes(x=snow,y=as.factor(year),fill=snow)) + 
+  scale_color_viridis_c() +
+    scale_fill_viridis_c() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+plotly::ggplotly(tmaxmin_hex)
+
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+plotly::ggplotly(snow_year_dist)
+```
+
+### Chart C
+
+```{r}
+
+```
+

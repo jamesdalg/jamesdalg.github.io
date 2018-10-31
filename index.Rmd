@@ -3,19 +3,24 @@ title: "James Dalgleish"
 output: html_document
 ---
 
+<link rel="stylesheet" href="academicons/css/academicons.min.css"/>
+
 ### Brief Introduction
 
 I am a Graduate student at Columbia University, Department of Biostatistics.
 My current interests include R development, biostatistics, decision trees, genomics,
-epigenetics, penalized regression, and more. I am the author of the [HiClink Hi-C toolkit](https://github.com/jamesdalg/HiClink), and the [CNVScope R package](https://cran.r-project.org/package=CNVScope) and shiny application, currently hosted by the National Cancer Institute to visually display epigenetic cancer data. My advisor at NCI is Paul Meltzer, whose lab formerly was part of the NHGRI and has worked on many large projects in Osteosarcoma, Breast Cancer, and other cancers. Within his lab, I have studied 3D DNA confirmation, DNA expression, and Copy Number Data.
+epigenetics, penalized regression, and more. I am the author of the [HiClink Hi-C toolkit](https://github.com/jamesdalg/HiClink), and the [CNVScope R package](https://cran.r-project.org/package=CNVScope) and shiny application, currently hosted by the National Cancer Institute to visually display epigenetic cancer data. My advisor at NCI is Paul Meltzer, whose lab formerly was part of the NHGRI and has worked on many high throughput projects in Osteosarcoma and Breast Cancer. Within his lab, I have studied 3D DNA confirmation, DNA expression, and Copy Number Data.
 
 Prior to this, I worked at the NIDDK, kidney disease section, where I developed methodology to separate expression data and we have a paper currently in review for the Journal of the American Society of Nephrology.
 
 Much of my code features inherent parallelism to work with large datasets and utilizes several mechanisms to accomplish large scale computational tasks.
 
+An example of my ability to visualize complex datasets can be found [here](noaa_flexdash.html).  
+
 James Dalgleish  
 Department of Biostatistics  
 Columbia University  
-CRTA 2017-2018 
+CRTA 2017-2018  
 National Cancer Institute 
 Genetics Branch
+504.390.4455
