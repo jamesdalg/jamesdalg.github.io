@@ -26,5 +26,5 @@ navbar:
 
 output:
   html_document:
-      theme: theme
+      theme: default
       css: ['bootstrap.min.css','bootstrap.css','css/academicons.css']
