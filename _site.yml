@@ -13,7 +13,7 @@ navbar:
       href: mailto:<james.dalgleish@nih.gov>
     - icon: fa-github fa-lg
       href: http://github.com/jamesdalg/
-    - icon: fa-r-project fa-lg
+    - icon: fa-registered fa-lg
       href: https://cran.r-project.org/web/packages/CNVScope/index.html
     - icon: ai ai-pubmed
       href: https://www.ncbi.nlm.nih.gov/pubmed/?term=dalgleish+j
@@ -25,4 +25,6 @@ navbar:
       
 
 output:
-  html_document
+  html_document:
+      theme: theme
+      css: ['bootstrap.min.css','bootstrap.css','css/academicons.css']

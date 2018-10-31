@@ -3,7 +3,6 @@ title: "James Dalgleish"
 output: html_document
 ---
 
-<link rel="stylesheet" href="academicons/css/academicons.min.css"/>
 
 ### Brief Introduction
 
