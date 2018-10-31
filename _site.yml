@@ -17,6 +17,12 @@ navbar:
       href: https://cran.r-project.org/web/packages/CNVScope/index.html
     - icon: ai ai-pubmed
       href: https://www.ncbi.nlm.nih.gov/pubmed/?term=dalgleish+j
+    - icon: fa-linkedin fa-lg
+      href: https://www.linkedin.com/in/james-dalgleish-0920365b/
+    - icon: ai-google-scholar
+      href: https://scholar.google.com/citations?user=JHX502IAAAAJ&hl=en
+
+      
 
 output:
   html_document:
