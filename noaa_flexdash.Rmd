@@ -143,31 +143,9 @@ p <- layout(s, showlegend = FALSE)
 
 ```{r, cache = T}
 #The below code was used to pull NOAA data with latitude and longitude.
-#library(rnoaa) #load NOAA package
-#stations <- ghcnd_stations() #Grabs station ids
-#nystationids <-  stations %>%  #filters stations for New York only.
-#  filter(state == "NY") %>% 
-#  distinct(id)
-#nydat <- meteo_pull_monitors(nystationids$id, 
-#                             date_min = "1981-01-01", 
-#                             date_max = "2010-12-31", 
-#                             var = c("PRCP", "SNOW", "SNWD", "TMAX", #"TMIN","LATITUDE","LONGITUDE","ELEVATION"))
-#dir.create("data")
-#saveRDS(nydat,file = "./data/nydat_latlng.rds")
-noaa_latlng <- readRDS("./data/nydat_latlng.rds") %>% 
-  as.tibble() %>%  #convert to tibble format.
-  janitor::clean_names() %>%  #convert to snake case.
-mutate(day = lubridate::day(date), #create day, month, and year variables.
-       month = lubridate::month(date),
-       year = lubridate::year(date),
-       tmax = as.numeric(tmax)/10, #convert tmax and tmin to numeric type and correct to comparable units of degrees celcius (rather than tenths of degrees)
-       tmin = as.numeric(tmin)/10,
-       prcp = as.numeric(prcp)/10, #corrects the precipitation to be in milimeters rather than tenths of a mililiter
-       snow = as.numeric(snow),
-       snwd = as.numeric(snwd),
-        snow_rcp = snow %>% 
-            as.numeric() %>% 
-             (function(x){1 - 1/x}) )
+stations <- rnoaa::ghcnd_stations() #Grabs station ids
+
+noaa_latlng <- inner_join(noaa_clean, stations, by = "id")
 
 ```
 
