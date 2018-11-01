@@ -6,7 +6,7 @@ navbar:
     - text: "About"
       href: about.html
     - icon: ai ai-cv
-      href: /CV/JDalgeish_resume_1_15_2017v3.pdf
+      href: ./CV/JDalgeish_CV_1_15_2017v3.pdf
     - icon: fa-envelope fa-lg
       href: mailto:<jld2227@cumc.columbia.edu>
     - icon: fa-envelope fa-lg
@@ -27,4 +27,4 @@ navbar:
 output:
   html_document:
       theme: default
-      css: ['bootstrap.min.css','bootstrap.css','css/academicons.css']
+      css: ['css/academicons.css']

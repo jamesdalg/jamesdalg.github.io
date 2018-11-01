@@ -11,6 +11,8 @@ library(flexdashboard)
 library(tidyverse)
 library(p8105.datasets)
 library(plotly)
+#use below to render
+#rmarkdown::render("noaa_flexdash.Rmd",output_format = "flex_dashboard")
 ```
 
 Column {data-width=650}
@@ -53,59 +55,57 @@ plot_ly(data = ., type = "violin", x = ~year, y = ~snow_rcp) %>%
     violingap = 0,
     violingroupgap = 0
   )
-  df <- read.csv("https://raw.githubusercontent.com/plotly/datasets/master/violin_data.csv")
-
-p <- noaa_clean %>%
-    filter(snow != 0) %>% 
-  group_by(year) %>%
-  sample_n(500) %>% 
-  plot_ly(type = 'violin') %>%
-  add_trace(
-    x = ~year,
-    y = ~snow,
-    legendgroup = 'Snowfall (mm)',
-    scalegroup = 'Snowfall (mm)',
-    name = 'Snowfall (mm)',
-    side = 'negative',
-    box = list(
-      visible = T
-    ),
-    meanline = list(
-      visible = T
-    ),
-    line = list(
-      color = 'blue'
-    )
-  ) %>%
-  add_trace(
-    x = ~year,
-    y = ~snwd,
-    legendgroup = 'Snow depth (mm)',
-    scalegroup = 'Snow depth (mm)',
-    name = 'Snow depth (mm)',
-    side = 'positive',
-    box = list(
-      visible = T
-    ),
-    meanline = list(
-      visible = T
-    ),
-    line = list(
-      color = 'green'
-    )
-  ) %>% 
-  layout(
-    xaxis = list(
-      title = ""  
-    ),
-    yaxis = list(
-      title = "",
-      zeroline = F
-    ),
-    violingap = 0,
-    violingroupgap = 0,
-    violinmode = 'overlay'
-  )
+snow_year_dist
+# p <- noaa_clean %>%
+#     filter(snow != 0) %>% 
+#   group_by(year) %>%
+#   sample_n(500) %>% 
+#   plot_ly(type = 'violin') %>%
+#   add_trace(
+#     x = ~year,
+#     y = ~snow,
+#     legendgroup = 'Snowfall (mm)',
+#     scalegroup = 'Snowfall (mm)',
+#     name = 'Snowfall (mm)',
+#     side = 'negative',
+#     box = list(
+#       visible = T
+#     ),
+#     meanline = list(
+#       visible = T
+#     ),
+#     line = list(
+#       color = 'blue'
+#     )
+#   ) %>%
+#   add_trace(
+#     x = ~year,
+#     y = ~snwd,
+#     legendgroup = 'Snow depth (mm)',
+#     scalegroup = 'Snow depth (mm)',
+#     name = 'Snow depth (mm)',
+#     side = 'positive',
+#     box = list(
+#       visible = T
+#     ),
+#     meanline = list(
+#       visible = T
+#     ),
+#     line = list(
+#       color = 'green'
+#     )
+#   ) %>% 
+#   layout(
+#     xaxis = list(
+#       title = ""  
+#     ),
+#     yaxis = list(
+#       title = "",
+#       zeroline = F
+#     ),
+#     violinmode = 'overlay'
+#   ) 
+# print(p)
   #, color = ~snow, fill = ~snow 
 #  add_markers(alpha = 0.2) %>%
 #  toWebGL()
@@ -128,25 +128,34 @@ Column {data-width=350}
 ```{r}
 set.seed(1)
 s <- subplot(
-  plot_ly(data = noaa_clean %>% na.omit(),
+  plot_ly(data = noaa_clean %>%
+            na.omit() %>%
+#            filter(snwd < 2e3 & snow < 2e3) %>%
+            sample_n(50),
           x = ~snow, type = "violin", side = "positive"),
   plotly_empty(),
-  plot_ly(data = noaa_clean %>% na.omit(),
+  plot_ly(data = noaa_clean %>% 
+            na.omit() %>% 
+#            filter(snwd < 2e3 & snow < 2e3) %>%
+            sample_n(50),
           x = ~snow, y = ~snwd, z = ~tmax, type = "contour"),
-  plot_ly(data = noaa_clean %>% na.omit(),
+  plot_ly(data = noaa_clean %>% 
+            na.omit() %>% 
+#            filter(snwd < 2e3 & snow < 2e3) %>%
+            sample_n(50),
           y = ~snwd, type = "violin", side = "positive"),
   nrows = 2, heights = c(0.2, 0.8), widths = c(0.8, 0.2), margin = 0,
   shareX = TRUE, shareY = TRUE, titleX = FALSE, titleY = FALSE
-) %>% toWebGL()
+) 
 p <- layout(s, showlegend = FALSE)
+p
 ```
 
 ### Chart C
 
-```{r, cache = T}
+```{r, cache = F}
 #The below code was used to pull NOAA data with latitude and longitude.
 stations <- rnoaa::ghcnd_stations() #Grabs station ids
-nc <- sf::st_read(system.file("shape/ny.shp", package = "sf"), quiet = TRUE) #grabs ny map
 noaa_latlng <- inner_join(noaa_clean, stations, by = "id") %>% 
   select(names(noaa_clean),"latitude","longitude","elevation") %>%
   group_by(year) %>%
@@ -159,7 +168,7 @@ ny_county_data <- map_data('county') %>%
 plotly::plot_ly(data = ny_county_data, x = ~long, y = ~lat, fillcolor = 'white',
                 hoverinfo = "none") %>% 
 add_polygons(size = I(2)) %>% 
-  add_markers(data = noaa_latlng, x = ~longitude, y = ~latitude, color = ~snwd)# %>% 
-#  toWebGL()
+  add_markers(data = noaa_latlng, x = ~longitude, y = ~latitude, color = ~snwd) %>% 
+  toWebGL()
 ```
 
