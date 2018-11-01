@@ -126,17 +126,18 @@ Column {data-width=350}
 ### Chart B
 
 ```{r}
-#this is just test data
-x <- rnorm(200)
-y <- rnorm(200)
+set.seed(1)
 s <- subplot(
-  plot_ly(data = noaa_clean, x = ~snow, type = "violin", side = "positive"),
+  plot_ly(data = noaa_clean %>% na.omit(),
+          x = ~snow, type = "violin", side = "positive"),
   plotly_empty(),
-  plot_ly(data = noaa_clean, x = ~snow, y = ~snwd, z = ~tmax type = "contour"),
-  plot_ly(data = noaa_clean, y = ~snwd, type = "violin", side = "positive"),
+  plot_ly(data = noaa_clean %>% na.omit(),
+          x = ~snow, y = ~snwd, z = ~tmax, type = "contour"),
+  plot_ly(data = noaa_clean %>% na.omit(),
+          y = ~snwd, type = "violin", side = "positive"),
   nrows = 2, heights = c(0.2, 0.8), widths = c(0.8, 0.2), margin = 0,
   shareX = TRUE, shareY = TRUE, titleX = FALSE, titleY = FALSE
-)
+) %>% toWebGL()
 p <- layout(s, showlegend = FALSE)
 ```
 
