@@ -47,15 +47,46 @@ snow_year_dist <- noaa_clean %>%
   filter(year %in% c(2010,2009)) %>% 
 group_by(year) %>%
   sample_n(500) %>% 
-plot_ly(data = ., type = "violin", x = ~year, y = ~snow_rcp) %>% 
-  # add_trace(y = ~snow, x = ~year,  side = "negative") %>% #
-  # add_trace(y = ~snwd, x = ~year, side = "positive") %>% # x = ~month, 
+plot_ly(data = .) %>% 
+   add_trace(y = ~snow, x = ~year,  side = "negative") %>% #
+   add_trace(y = ~snwd, x = ~year, side = "positive") %>% # x = ~month, 
   layout(
     yaxis = list(type = "log"),
     violingap = 0,
     violingroupgap = 0
   )
-snow_year_dist
+noaa_latlng <- inner_join(noaa_clean, stations, by = "id") %>% 
+    na.omit() %>% 
+  select(names(noaa_clean),"latitude","longitude","elevation") %>%
+  group_by(year) %>%
+  sample_n(50) 
+
+ noaa_latlng %>% 
+  plot_ly(data) %>% 
+  add_trace(
+    type = "scatterternary",
+    mode = "markers",
+    a = ~latitude, b = ~longitude, c = ~elevation, color = ~prcp, #size = ~snow,
+    marker = list( 
+      symbol = 100,
+      color = '#DB7365',
+      size = 14,
+      line = list('width' = 2)
+    )
+    
+  ) %>% 
+    #add_markers(x = ~latitude, y = ~longitude, z = ~elevation, color = ~prcp) %>% 
+  layout(
+    title = "Geolocation, Altitude, and Precipitation in New York",
+    ternary = list(
+      sum = 100,
+      aaxis = list(title = 'Latitude'),
+      baxis = list(title = 'Longitude'),
+      caxis = list(title = 'Elevation')
+    )
+  )
+#snow_year_dist
+
 # p <- noaa_clean %>%
 #     filter(snow != 0) %>% 
 #   group_by(year) %>%
@@ -146,7 +177,7 @@ s <- subplot(
           y = ~snwd, type = "violin", side = "positive"),
   nrows = 2, heights = c(0.2, 0.8), widths = c(0.8, 0.2), margin = 0,
   shareX = TRUE, shareY = TRUE, titleX = FALSE, titleY = FALSE
-) 
+)
 p <- layout(s, showlegend = FALSE)
 p
 ```
