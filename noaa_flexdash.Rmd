@@ -126,12 +126,13 @@ Column {data-width=350}
 ### Chart B
 
 ```{r}
+#this is just test data
 x <- rnorm(200)
 y <- rnorm(200)
 s <- subplot(
   plot_ly(data = noaa_clean, x = ~snow, type = "violin", side = "positive"),
   plotly_empty(),
-  plot_ly(data = noaa_clean, x = ~snow, y = ~snwd, type = "histogram2dcontour"),
+  plot_ly(data = noaa_clean, x = ~snow, y = ~snwd, z = ~tmax type = "contour"),
   plot_ly(data = noaa_clean, y = ~snwd, type = "violin", side = "positive"),
   nrows = 2, heights = c(0.2, 0.8), widths = c(0.8, 0.2), margin = 0,
   shareX = TRUE, shareY = TRUE, titleX = FALSE, titleY = FALSE
@@ -144,8 +145,20 @@ p <- layout(s, showlegend = FALSE)
 ```{r, cache = T}
 #The below code was used to pull NOAA data with latitude and longitude.
 stations <- rnoaa::ghcnd_stations() #Grabs station ids
-
-noaa_latlng <- inner_join(noaa_clean, stations, by = "id")
-
+nc <- sf::st_read(system.file("shape/ny.shp", package = "sf"), quiet = TRUE) #grabs ny map
+noaa_latlng <- inner_join(noaa_clean, stations, by = "id") %>% 
+  select(names(noaa_clean),"latitude","longitude","elevation") %>%
+  group_by(year) %>%
+  sample_n(50)
+  #plot_ly(x = ~longitude, y = ~latitude, z = ~elevation, type = "contour")
+Sys.setenv('MAPBOX_TOKEN' = 'pk.eyJ1IjoiamxkMjIyNyIsImEiOiJjam55d2dmMHoxOXZqM3FrZ2VlbzQxYml2In0.CjBx2QOmKnCjhlh_l4edvA')
+ny_county_data <- map_data('county') %>%
+  filter(region == "new york") %>%
+  group_by(group)  
+plotly::plot_ly(data = ny_county_data, x = ~long, y = ~lat, fillcolor = 'white',
+                hoverinfo = "none") %>% 
+add_polygons(size = I(2)) %>% 
+  add_markers(data = noaa_latlng, x = ~longitude, y = ~latitude, color = ~snwd)# %>% 
+#  toWebGL()
 ```
 
