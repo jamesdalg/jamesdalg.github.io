@@ -104,7 +104,7 @@ p <- layout(s, showlegend = FALSE)
 p
 ```
 
-### Ranked Snowdepth for specific NOAA stations, displaying NY counties.
+### Ranked Snowdepth for specific NOAA stations in NY counties.
 
 ```{r, cache = F}
   #plot_ly(x = ~longitude, y = ~latitude, z = ~elevation, type = "contour")
