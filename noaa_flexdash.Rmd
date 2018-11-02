@@ -73,6 +73,14 @@ axis <- function(title) {
     ticklen = 5
   )
 }
+remove_bg <- list(
+  title = "",
+  zeroline = FALSE,
+  showline = FALSE,
+  showticklabels = FALSE,
+  showgrid = FALSE
+)
+
 ternary_plot <- noaa_latlng  %>% 
   plot_ly() %>%
   add_trace(
@@ -94,7 +102,8 @@ ternary_plot <- noaa_latlng  %>%
       aaxis = list(title = 'Snowfall'),
       baxis = list(title = 'Snowdepth'),
       caxis = list(title = 'Elevation')
-    )
+    ),
+    xaxis = remove_bg, yaxis = remove_bg
   )
  # noaa_latlng %>% 
  #  plot_ly(data) %>% 
