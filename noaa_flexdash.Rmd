@@ -100,32 +100,35 @@ ternary_plot
 Column {data-width=350}
 -----------------------------------------------------------------------
 
-### Snowfall, Snowdepth, and Temperature High relationships and distribution
+### Precipitation (points) with Geolocation and Elevation Contour
 
 ```{r}
 set.seed(1)
-snow_temp_contour <- subplot(
-  plot_ly(data = noaa_clean %>%
-            na.omit() %>%
-            filter(snow != 0 & snwd != 0) %>% 
-#            filter(snwd < 2e3 & snow < 2e3) %>%
-            sample_n(50),
-          x = ~snow, type = "violin", side = "positive"),
-  plotly_empty(),
-  plot_ly(data = noaa_latlng %>% 
+noaa_latlng_sample <- noaa_latlng %>% 
             na.omit() %>% 
-            filter(snow != 0 & snwd != 0),
-          x = ~longitude, y = ~latitude, z = ~elevation, type = "contour") %>% 
-  add_markers(data = noaa_latlng, x = ~longitude, y = ~latitude, color = ~prcp,  mode = "markers", type = "scatter"),
-  plot_ly(data = noaa_clean %>% 
-            na.omit() %>% 
-            filter(snow != 0 & snwd != 0) %>%
-#            filter(snwd < 2e3 & snow < 2e3) %>%
-            sample_n(500),
-          y = ~snwd, type = "violin", side = "positive"),
-  nrows = 2, heights = c(0.2, 0.8), widths = c(0.8, 0.2), margin = 0,
-  shareX = TRUE, shareY = TRUE, titleX = FALSE, titleY = FALSE
-)
+            filter(snow != 0 & snwd != 0)
+scatter_tooltip <- str_c("Precipitation: ",noaa_latlng_sample %>%
+                        pull(prcp),"mm\n",
+                      "Elevation: ", noaa_latlng_sample %>%
+                        pull(elevation), "m\n",
+                      "Latitude: ", noaa_latlng_sample %>%
+                        pull(latitude), " degrees N", "\n",
+                      "Longitude: ", noaa_latlng_sample %>%
+                        pull(latitude), " degrees N", "\n")
+contour_tooltip <- str_c("Elevation: ", noaa_latlng_sample %>%
+                        pull(elevation), "m\n",
+                      "Latitude: ", noaa_latlng_sample %>%
+                        pull(latitude), " degrees N", "\n",
+                      "Longitude: ", noaa_latlng_sample %>%
+                        pull(latitude), " degrees N", "\n")
+snow_temp_contour <- 
+  plot_ly(data = noaa_latlng_sample, hoverinfo = "text", text = contour_tooltip,
+          x = ~longitude, y = ~latitude, z = ~elevation, type = "contour", showscale = F) %>% 
+  add_trace(data = noaa_latlng_sample, x = ~longitude, y = ~latitude, color = ~prcp,
+            hoverinfo = "text", text = scatter_tooltip, mode = "markers", type = "scatter",
+            showscale = F, showlegend = F)  %>% 
+hide_colorbar()
+
 layout(snow_temp_contour, showlegend = FALSE)
 ```
 
