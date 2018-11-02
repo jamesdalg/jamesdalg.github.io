@@ -106,7 +106,8 @@ Column {data-width=350}
 set.seed(1)
 noaa_latlng_sample <- noaa_latlng %>% 
             na.omit() %>% 
-            filter(snow != 0 & snwd != 0)
+            filter(snow != 0 & snwd != 0) #subsampled the latitude and longitude containing NY NOAA data, removing zero values (these are uninteresting and fill the bulk of the dataset).
+#Custom tooltip vectors for contour(lat, long, altitude) and scatter (lat, long, altitude, precipitation) with units.
 scatter_tooltip <- str_c("Precipitation: ",noaa_latlng_sample %>%
                         pull(prcp),"mm\n",
                       "Elevation: ", noaa_latlng_sample %>%
@@ -123,13 +124,13 @@ contour_tooltip <- str_c("Elevation: ", noaa_latlng_sample %>%
                         pull(latitude), " degrees N", "\n")
 snow_temp_contour <- 
   plot_ly(data = noaa_latlng_sample, hoverinfo = "text", text = contour_tooltip,
-          x = ~longitude, y = ~latitude, z = ~elevation, type = "contour", showscale = F) %>% 
+          x = ~longitude, y = ~latitude, z = ~elevation, type = "contour", showscale = F) %>%  #creates a contour plot with geolocation and altitude contour.
   add_trace(data = noaa_latlng_sample, x = ~longitude, y = ~latitude, color = ~prcp,
             hoverinfo = "text", text = scatter_tooltip, mode = "markers", type = "scatter",
-            showscale = F, showlegend = F)  %>% 
-hide_colorbar()
+            showscale = F, showlegend = F)  %>% #adds markers, colored by precipitation in mm.
+hide_colorbar() #removes colorbar overlaps. The tooltip gives this information.
 
-layout(snow_temp_contour, showlegend = FALSE)
+layout(snow_temp_contour, showlegend = FALSE) #hides the "trace 1 legend"
 ```
 
 ### Ranked Snowdepth for specific NOAA stations in NY counties.
