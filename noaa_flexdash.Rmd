@@ -36,50 +36,21 @@ mutate(day = lubridate::day(noaa$date), #create day, month, and year variables.
        prcp = as.numeric(prcp)/10, #corrects the precipitation to be in milimeters rather than tenths of a mililiter
        snow = as.numeric(snow),
        snwd = as.numeric(snwd),
-        snow_rcp = snow %>% 
+        snow_rank = snow %>% 
             as.numeric() %>% 
-             (function(x){1 - 1/x}) )
-tmaxmin_hex <- noaa_clean %>% 
-  ggplot(aes(y = tmax, x = tmin)) + geom_hex() +
-  labs(y = "Max temperature, in Degrees C", x = "Minimum Temperature In Degrees C")
+             rank(),
+        snwd_rank = snwd %>% 
+            as.numeric() %>% 
+             rank()
+       )
 
-snow_year_dist <- noaa_clean %>% 
-  filter(year %in% c(2010,2009)) %>% 
-group_by(year) %>%
-  sample_n(500) %>% 
-plot_ly(data = .) %>% 
-   add_trace(y = ~snow, x = ~year,  side = "negative") %>% #
-   add_trace(y = ~snwd, x = ~year, side = "positive") %>% # x = ~month, 
-  layout(
-    yaxis = list(type = "log"),
-    violingap = 0,
-    violingroupgap = 0
-  )
 noaa_latlng <- inner_join(noaa_clean, stations, by = "id") %>% 
     na.omit() %>% 
   select(names(noaa_clean),"latitude","longitude","elevation") %>%
   group_by(year) %>%
   sample_n(50) 
-axis <- function(title) {
-  list(
-    title = title,
-    titlefont = list(
-      size = 20
-    ),
-    tickfont = list(
-      size = 15
-    ),
-    tickcolor = 'rgba(0,0,0,0)',
-    ticklen = 5
-  )
-}
-remove_bg <- list(
-  title = "",
-  zeroline = FALSE,
-  showline = FALSE,
-  showticklabels = FALSE,
-  showgrid = FALSE
-)
+remove_bg <- list( zeroline = FALSE, showline = FALSE, showticklabels = FALSE,
+  title = "", showgrid = FALSE)
 
 ternary_plot <- noaa_latlng  %>% 
   plot_ly() %>%
@@ -98,93 +69,6 @@ ternary_plot <- noaa_latlng  %>%
     ),
     xaxis = remove_bg, yaxis = remove_bg
   )
- # noaa_latlng %>% 
- #  plot_ly(data) %>% 
- #  add_trace(
- #    type = "scatterternary",
- #    mode = "markers",
- #    a = ~latitude, b = ~longitude, c = ~elevation, text = ~prcp#, 
- #    # marker = list( 
- #    #   symbol = 100,
- #    #   color = '#DB7365',
- #    #   size = 14,
- #    #   line = list('width' = 2)
- #    # )
- #    # 
- #  ) %>% #color = ~prcp, #size = ~snow,
- #    #add_markers(x = ~latitude, y = ~longitude, z = ~elevation, color = ~prcp) %>% 
- #  layout(
- #    title = "Geolocation, Altitude, and Precipitation in New York",
- #    ternary = list(
- #      sum = 100,
- #      aaxis = list(title = 'Latitude'),
- #      baxis = list(title = 'Longitude'),
- #      caxis = list(title = 'Elevation')
- #    )
- #  )
-#snow_year_dist
-
-# p <- noaa_clean %>%
-#     filter(snow != 0) %>% 
-#   group_by(year) %>%
-#   sample_n(500) %>% 
-#   plot_ly(type = 'violin') %>%
-#   add_trace(
-#     x = ~year,
-#     y = ~snow,
-#     legendgroup = 'Snowfall (mm)',
-#     scalegroup = 'Snowfall (mm)',
-#     name = 'Snowfall (mm)',
-#     side = 'negative',
-#     box = list(
-#       visible = T
-#     ),
-#     meanline = list(
-#       visible = T
-#     ),
-#     line = list(
-#       color = 'blue'
-#     )
-#   ) %>%
-#   add_trace(
-#     x = ~year,
-#     y = ~snwd,
-#     legendgroup = 'Snow depth (mm)',
-#     scalegroup = 'Snow depth (mm)',
-#     name = 'Snow depth (mm)',
-#     side = 'positive',
-#     box = list(
-#       visible = T
-#     ),
-#     meanline = list(
-#       visible = T
-#     ),
-#     line = list(
-#       color = 'green'
-#     )
-#   ) %>% 
-#   layout(
-#     xaxis = list(
-#       title = ""  
-#     ),
-#     yaxis = list(
-#       title = "",
-#       zeroline = F
-#     ),
-#     violinmode = 'overlay'
-#   ) 
-# print(p)
-  #, color = ~snow, fill = ~snow 
-#  add_markers(alpha = 0.2) %>%
-#  toWebGL()
-#   filter(snow > 0 & snow < 100) %>%
-#     ggplot(aes(x = snow,y = year,color=snow,fill = snow)) +
-#   geom_density_ridges_gradient(scale = 0.85,gradient_lwd = .1,
-#                                aes(x = snow,y = as.factor(year),fill = snow)) +
-#   scale_color_viridis_c() +
-#     scale_fill_viridis_c() +
-#   theme(axis.text.x = element_text(angle = 90, hjust = 1))
-# plotly::ggplotly(tmaxmin_hex) %>% toWebGL()
 ternary_plot
 ```
 
