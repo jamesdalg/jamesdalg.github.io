@@ -45,21 +45,45 @@ mutate(day = lubridate::day(noaa$date), #create day, month, and year variables.
        )
 #The below code was used to create NOAA data with latitude and longitude.
 stations <- rnoaa::ghcnd_stations() #Grabs station ids
-noaa_latlng <- inner_join(noaa_clean, stations, by = "id") %>% 
-    na.omit() %>% 
-  select(names(noaa_clean),"latitude","longitude","elevation") %>%
-  group_by(year) %>%
+noaa_latlng <- inner_join(noaa_clean, stations, by = "id") %>%  #merges by station id with the cleaned NOAA data.
+    na.omit() %>% #removes rows with NA (avoids plotly errors and ensures comparability)
+  select(names(noaa_clean),"latitude","longitude","elevation") %>% #just adds lat, lng, elevation to the new dataframe (instead of all the other station data).
+  group_by(year) %>% #randomly samples 50 observations from each year
   sample_n(50) 
 remove_bg <- list( zeroline = FALSE, showline = FALSE, showticklabels = FALSE,
-  title = "", showgrid = FALSE)
-
-ternary_plot <- noaa_latlng  %>% 
-  plot_ly() %>%
+  title = "", showgrid = FALSE) #snippet from plot.ly that disables extra axes put on top of the ternary plot.
+tern_tooltip <- str_c("Snowfall: ",noaa_latlng %>%
+                        pull(snow),"mm\n",
+                      "Snow Depth: ", noaa_latlng %>%
+                        pull(snwd), "mm\n",
+                      "Elevation: ", noaa_latlng %>%
+                        pull(elevation), "m\n",
+                      "Latitude: ", noaa_latlng %>%
+                        pull(latitude), " degrees N", "\n",
+                      
+                      "Temperature High: ", noaa_latlng %>%
+                        pull(latitude), " degrees C", "\n")
+ternary_plot <- noaa_latlng  %>% #select the cleaned dataset with latitude and longitude.
+  mutate(snow_perc = rank(snow) /
+           length(snow) * 100,
+         snwd_perc = rank(snwd) /
+           length(snwd) * 100,
+         elev_perc = rank(elevation) /
+           length(elevation) * 100
+         ) %>% 
+  plot_ly() %>% #call plotly
   add_trace(
-    type = 'scatterternary',
+    type = 'scatterternary', #set type to scatterternary with markers mode.
     mode = 'markers',
-    a = ~snow, b = ~snwd, c = ~elevation,text = ~tmax, color = ~latitude
-  ) %>%
+    a = ~snow_perc, #transforming to percentile so that data doesn't go off the plot
+    b = ~snwd_perc,
+    c = ~elev_perc,
+    hoverinfo = "text",
+    text = tern_tooltip,
+    color = ~latitude
+  ) %>% #sets snowfall for top variable, snowdepth for left corner variable,
+  #and elvation for right corner variable in ternary plot. 
+  #colors points by latitude on a continous scale
   layout(
     #omitted title as in the ternary plot, it unfortunately overlaps with the title of the top variable. A title is expected for each plot at the top in the flexdashboard, so it can be best titled there without conflicting with the existing labels.
     ternary = list(
@@ -76,45 +100,47 @@ ternary_plot
 Column {data-width=350}
 -----------------------------------------------------------------------
 
-### Chart B
+### Snowfall, Snowdepth, and Temperature High relationships and distribution
 
 ```{r}
 set.seed(1)
-s <- subplot(
+snow_temp_contour <- subplot(
   plot_ly(data = noaa_clean %>%
             na.omit() %>%
+            filter(snow != 0 & snwd != 0) %>% 
 #            filter(snwd < 2e3 & snow < 2e3) %>%
-            sample_n(500),
+            sample_n(50),
           x = ~snow, type = "violin", side = "positive"),
   plotly_empty(),
   plot_ly(data = noaa_clean %>% 
             na.omit() %>% 
+            filter(snow != 0 & snwd != 0) %>%
 #            filter(snwd < 2e3 & snow < 2e3) %>%
-            sample_n(500),
+            sample_n(50),
           x = ~snow, y = ~snwd, z = ~tmax, type = "contour"),
   plot_ly(data = noaa_clean %>% 
             na.omit() %>% 
+            filter(snow != 0 & snwd != 0) %>%
 #            filter(snwd < 2e3 & snow < 2e3) %>%
             sample_n(500),
           y = ~snwd, type = "violin", side = "positive"),
   nrows = 2, heights = c(0.2, 0.8), widths = c(0.8, 0.2), margin = 0,
   shareX = TRUE, shareY = TRUE, titleX = FALSE, titleY = FALSE
 )
-p <- layout(s, showlegend = FALSE)
-p
+layout(snow_temp_contour, showlegend = FALSE)
 ```
 
 ### Ranked Snowdepth for specific NOAA stations in NY counties.
 
 ```{r, cache = F}
   #plot_ly(x = ~longitude, y = ~latitude, z = ~elevation, type = "contour")
-Sys.setenv('MAPBOX_TOKEN' = 'pk.eyJ1IjoiamxkMjIyNyIsImEiOiJjam55d2dmMHoxOXZqM3FrZ2VlbzQxYml2In0.CjBx2QOmKnCjhlh_l4edvA')
-ny_county_data <- map_data('county') %>%
+Sys.setenv('MAPBOX_TOKEN' = 'pk.eyJ1IjoiamxkMjIyNyIsImEiOiJjam55d2dmMHoxOXZqM3FrZ2VlbzQxYml2In0.CjBx2QOmKnCjhlh_l4edvA') #Sets mapbox token, required for doing plotly mapbox operations.
+ny_county_data <- map_data('county') %>% #gets county data from mapbox.
   filter(region == "new york") %>%
   group_by(group)  
-tooltip <- str_c("Snowdepth: ",noaa_latlng %>% pull(snwd), "mm")
+tooltip <- str_c("Snowdepth: ",noaa_latlng %>% pull(snwd), "mm") #formats to tooltip to be informative.
 plotly::plot_ly(data = ny_county_data, x = ~long, y = ~lat) %>% 
-add_polygons(size = I(2), fillcolor = ~subregion, text = ~subregion, showlegend = FALSE) %>% 
+add_polygons(size = I(2), fillcolor = ~subregion, text = ~subregion, showlegend = FALSE) %>% #creates a plotly plot using the polygons from the mapbox data for counties.
   add_markers(data = noaa_latlng, x = ~longitude, y = ~latitude, color = ~snwd_rank, size = ~snow_rank, text = tooltip) %>% 
   colorbar(title = "Snow Depth (ranked)",orientation = 'h') %>%
   layout(
