@@ -60,31 +60,66 @@ noaa_latlng <- inner_join(noaa_clean, stations, by = "id") %>%
   select(names(noaa_clean),"latitude","longitude","elevation") %>%
   group_by(year) %>%
   sample_n(50) 
-
- noaa_latlng %>% 
-  plot_ly(data) %>% 
+axis <- function(title) {
+  list(
+    title = title,
+    titlefont = list(
+      size = 20
+    ),
+    tickfont = list(
+      size = 15
+    ),
+    tickcolor = 'rgba(0,0,0,0)',
+    ticklen = 5
+  )
+}
+ternary_plot <- noaa_latlng  %>% 
+  plot_ly() %>%
   add_trace(
-    type = "scatterternary",
-    mode = "markers",
-    a = ~latitude, b = ~longitude, c = ~elevation, color = ~prcp, #size = ~snow,
-    marker = list( 
-      symbol = 100,
-      color = '#DB7365',
-      size = 14,
-      line = list('width' = 2)
-    )
-    
-  ) %>% 
-    #add_markers(x = ~latitude, y = ~longitude, z = ~elevation, color = ~prcp) %>% 
+    type = 'scatterternary',
+    mode = 'markers',
+    a = ~snow, b = ~snwd, c = ~elevation,text = ~tmax, color = ~latitude#,
+ #   size = ~prcp#,
+    # marker = list( 
+    #   symbol = 100,
+    #   color = '#DB7365',
+    #   size = 14,
+    #   line = list('width' = 2)
+    # )
+  ) %>%
   layout(
     title = "Geolocation, Altitude, and Precipitation in New York",
     ternary = list(
       sum = 100,
-      aaxis = list(title = 'Latitude'),
-      baxis = list(title = 'Longitude'),
+      aaxis = list(title = 'Snowfall'),
+      baxis = list(title = 'Snowdepth'),
       caxis = list(title = 'Elevation')
     )
   )
+ # noaa_latlng %>% 
+ #  plot_ly(data) %>% 
+ #  add_trace(
+ #    type = "scatterternary",
+ #    mode = "markers",
+ #    a = ~latitude, b = ~longitude, c = ~elevation, text = ~prcp#, 
+ #    # marker = list( 
+ #    #   symbol = 100,
+ #    #   color = '#DB7365',
+ #    #   size = 14,
+ #    #   line = list('width' = 2)
+ #    # )
+ #    # 
+ #  ) %>% #color = ~prcp, #size = ~snow,
+ #    #add_markers(x = ~latitude, y = ~longitude, z = ~elevation, color = ~prcp) %>% 
+ #  layout(
+ #    title = "Geolocation, Altitude, and Precipitation in New York",
+ #    ternary = list(
+ #      sum = 100,
+ #      aaxis = list(title = 'Latitude'),
+ #      baxis = list(title = 'Longitude'),
+ #      caxis = list(title = 'Elevation')
+ #    )
+ #  )
 #snow_year_dist
 
 # p <- noaa_clean %>%
@@ -148,7 +183,7 @@ noaa_latlng <- inner_join(noaa_clean, stations, by = "id") %>%
 #     scale_fill_viridis_c() +
 #   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 # plotly::ggplotly(tmaxmin_hex) %>% toWebGL()
-
+ternary_plot
 ```
 
 Column {data-width=350}
