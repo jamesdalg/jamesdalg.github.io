@@ -18,7 +18,7 @@ library(plotly)
 Column {data-width=650}
 -----------------------------------------------------------------------
 
-### Chart A
+### Latitude, Altitude, Snowfall, and Snowdepth in New York
 
 ```{r}
 noaa <- p8105.datasets::ny_noaa %>% 
@@ -43,7 +43,8 @@ mutate(day = lubridate::day(noaa$date), #create day, month, and year variables.
             as.numeric() %>% 
              rank()
        )
-
+#The below code was used to create NOAA data with latitude and longitude.
+stations <- rnoaa::ghcnd_stations() #Grabs station ids
 noaa_latlng <- inner_join(noaa_clean, stations, by = "id") %>% 
     na.omit() %>% 
   select(names(noaa_clean),"latitude","longitude","elevation") %>%
@@ -60,7 +61,7 @@ ternary_plot <- noaa_latlng  %>%
     a = ~snow, b = ~snwd, c = ~elevation,text = ~tmax, color = ~latitude
   ) %>%
   layout(
-    title = "Geolocation, Altitude, and Precipitation in New York",
+    #omitted title as in the ternary plot, it unfortunately overlaps with the title of the top variable. A title is expected for each plot at the top in the flexdashboard, so it can be best titled there without conflicting with the existing labels.
     ternary = list(
       sum = 100,
       aaxis = list(title = 'Snowfall'),
@@ -83,18 +84,18 @@ s <- subplot(
   plot_ly(data = noaa_clean %>%
             na.omit() %>%
 #            filter(snwd < 2e3 & snow < 2e3) %>%
-            sample_n(50),
+            sample_n(500),
           x = ~snow, type = "violin", side = "positive"),
   plotly_empty(),
   plot_ly(data = noaa_clean %>% 
             na.omit() %>% 
 #            filter(snwd < 2e3 & snow < 2e3) %>%
-            sample_n(50),
+            sample_n(500),
           x = ~snow, y = ~snwd, z = ~tmax, type = "contour"),
   plot_ly(data = noaa_clean %>% 
             na.omit() %>% 
 #            filter(snwd < 2e3 & snow < 2e3) %>%
-            sample_n(50),
+            sample_n(500),
           y = ~snwd, type = "violin", side = "positive"),
   nrows = 2, heights = c(0.2, 0.8), widths = c(0.8, 0.2), margin = 0,
   shareX = TRUE, shareY = TRUE, titleX = FALSE, titleY = FALSE
@@ -103,24 +104,25 @@ p <- layout(s, showlegend = FALSE)
 p
 ```
 
-### Chart C
+### Ranked Snowdepth for specific NOAA stations, displaying NY counties.
 
 ```{r, cache = F}
-#The below code was used to pull NOAA data with latitude and longitude.
-stations <- rnoaa::ghcnd_stations() #Grabs station ids
-noaa_latlng <- inner_join(noaa_clean, stations, by = "id") %>% 
-  select(names(noaa_clean),"latitude","longitude","elevation") %>%
-  group_by(year) %>%
-  sample_n(50)
   #plot_ly(x = ~longitude, y = ~latitude, z = ~elevation, type = "contour")
 Sys.setenv('MAPBOX_TOKEN' = 'pk.eyJ1IjoiamxkMjIyNyIsImEiOiJjam55d2dmMHoxOXZqM3FrZ2VlbzQxYml2In0.CjBx2QOmKnCjhlh_l4edvA')
 ny_county_data <- map_data('county') %>%
   filter(region == "new york") %>%
   group_by(group)  
-plotly::plot_ly(data = ny_county_data, x = ~long, y = ~lat, fillcolor = 'white',
-                hoverinfo = "none") %>% 
-add_polygons(size = I(2)) %>% 
-  add_markers(data = noaa_latlng, x = ~longitude, y = ~latitude, color = ~snwd) %>% 
-  toWebGL()
+tooltip <- str_c("Snowdepth: ",noaa_latlng %>% pull(snwd), "mm")
+plotly::plot_ly(data = ny_county_data, x = ~long, y = ~lat) %>% 
+add_polygons(size = I(2), fillcolor = ~subregion, text = ~subregion, showlegend = FALSE) %>% 
+  add_markers(data = noaa_latlng, x = ~longitude, y = ~latitude, color = ~snwd_rank, size = ~snow_rank, text = tooltip) %>% 
+  colorbar(title = "Snow Depth (ranked)",orientation = 'h') %>%
+  layout(
+    legend = list(orientation = 'h'),
+    xaxis = list(title = "Longitude in degrees"),
+    yaxis = list(title = "Latitude in degrees")
+  ) #%>% 
+  #toWebGL()
+
 ```
 
