@@ -86,14 +86,7 @@ ternary_plot <- noaa_latlng  %>%
   add_trace(
     type = 'scatterternary',
     mode = 'markers',
-    a = ~snow, b = ~snwd, c = ~elevation,text = ~tmax, color = ~latitude#,
- #   size = ~prcp#,
-    # marker = list( 
-    #   symbol = 100,
-    #   color = '#DB7365',
-    #   size = 14,
-    #   line = list('width' = 2)
-    # )
+    a = ~snow, b = ~snwd, c = ~elevation,text = ~tmax, color = ~latitude
   ) %>%
   layout(
     title = "Geolocation, Altitude, and Precipitation in New York",
