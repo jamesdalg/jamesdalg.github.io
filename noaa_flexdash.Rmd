@@ -62,7 +62,7 @@ tern_tooltip <- str_c("Snowfall: ",noaa_latlng %>%
                         pull(latitude), " degrees N", "\n",
                       
                       "Temperature High: ", noaa_latlng %>%
-                        pull(latitude), " degrees C", "\n")
+                        pull(tmax), " degrees C", "\n")
 ternary_plot <- noaa_latlng  %>% #select the cleaned dataset with latitude and longitude.
   mutate(snow_perc = rank(snow) /
            length(snow) * 100,
@@ -112,12 +112,11 @@ snow_temp_contour <- subplot(
             sample_n(50),
           x = ~snow, type = "violin", side = "positive"),
   plotly_empty(),
-  plot_ly(data = noaa_clean %>% 
+  plot_ly(data = noaa_latlng %>% 
             na.omit() %>% 
-            filter(snow != 0 & snwd != 0) %>%
-#            filter(snwd < 2e3 & snow < 2e3) %>%
-            sample_n(50),
-          x = ~snow, y = ~snwd, z = ~tmax, type = "contour"),
+            filter(snow != 0 & snwd != 0),
+          x = ~longitude, y = ~latitude, z = ~elevation, type = "contour") %>% 
+  add_markers(data = noaa_latlng, x = ~longitude, y = ~latitude, color = ~prcp,  mode = "markers", type = "scatter"),
   plot_ly(data = noaa_clean %>% 
             na.omit() %>% 
             filter(snow != 0 & snwd != 0) %>%
